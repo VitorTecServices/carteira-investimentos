@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corretora - DIO Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        santander: '#EC0000',
+                        santanderDark: '#CC0000',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen font-sans antialiased">
+    <!-- Navbar Santander -->
+    <nav class="bg-santander shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-white tracking-tight">DIO Bank</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <span class="text-sm text-white font-medium">Olá, {{ username }}</span>
+                    <button onclick="logout()" class="text-sm font-semibold text-white/90 hover:text-white transition-colors">
+                        Sair
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Summary Card -->
+        <div class="bg-white border border-gray-200 shadow-sm rounded-none p-8 mb-8 flex flex-col md:flex-row md:items-center justify-between">
+            <div>
+                <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Patrimônio Consolidado</h2>
+                <div class="text-5xl font-bold text-gray-900 flex items-baseline gap-2">
+                    <span class="text-2xl text-gray-400 font-normal">R$</span>
+                    {{ format!("{:.2}", self.total_value) }}
+                </div>
+            </div>
+            
+            <div class="mt-6 md:mt-0">
+                <a href="/assets/new" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold shadow-md text-white bg-santander hover:bg-santanderDark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-santander transition-colors">
+                    + Adicionar Ativo
+                </a>
+            </div>
+        </div>
+
+        <div class="mb-6 border-b border-gray-300 pb-4">
+            <h1 class="text-2xl font-semibold text-gray-800">Meus Investimentos</h1>
+        </div>
+
+        <!-- Portfolio Table -->
+        <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Ativo</th>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Quantidade</th>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Preço Médio</th>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Total</th>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        {% if portfolio_items.is_empty() %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-16 text-center text-gray-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p class="mb-3 font-medium text-lg">Sua carteira está vazia.</p>
+                                <a href="/assets/new" class="text-santander font-bold hover:underline">Invista agora mesmo</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                            {% for item in portfolio_items %}
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-5 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="h-10 w-10 bg-red-100 flex items-center justify-center text-santander font-bold text-lg mr-4">
+                                            {{ item.asset_name.chars().next().unwrap() }}
+                                        </div>
+                                        <div class="text-base font-semibold text-gray-900">{{ item.asset_name }}</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 whitespace-nowrap text-right text-sm text-gray-700">
+                                    {{ item.quantity }}
+                                </td>
+                                <td class="px-6 py-5 whitespace-nowrap text-right text-sm text-gray-700">
+                                    R$ {{ format!("{:.2}", item.unit_value) }}
+                                </td>
+                                <td class="px-6 py-5 whitespace-nowrap text-right text-base font-bold text-gray-900">
+                                    R$ {{ format!("{:.2}", item.total_value) }}
+                                </td>
+                                <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+                                    <button onclick="removePortfolioItem({{ item.portfolio_id }})" class="text-santander hover:text-santanderDark transition-colors font-bold border border-transparent hover:border-santander px-3 py-1.5 rounded">
+                                        Remover
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function logout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (err) {
+                console.error('Erro ao deslogar', err);
+            }
+        }
+
+        async function removePortfolioItem(id) {
+            if (!confirm('Tem certeza de que deseja remover este ativo da sua carteira?')) return;
+            
+            try {
+                const res = await fetch(`/api/portfolio/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Erro ao remover ativo');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erro de conexão');
+            }
+        }
+    </script>
+</body>
+</html>

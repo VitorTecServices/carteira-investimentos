@@ -1,0 +1,28 @@
+[package]
+name = "wallet-live"
+version = "0.1.0"
+edition = "2024"
+authors = ["VitorTechServices"]
+description = "Carteira de Investimentos Fullstack - Desenvolvido por VitorTechServices"
+
+[dependencies]
+askama = { version = "0.15.6", features = ["derive"] }
+axum = { version = "0.8.8", features = ["macros"] }
+axum-extra = { version = "0.12.5", features = ["cookie-signed"] }
+color-eyre = "0.6.5"
+dotenvy = "0.15.7"
+jsonwebtoken = "9.3.0"
+chrono = "0.4.38"
+password-auth = "1.0.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sqlx = { version = "0.8", features = ["runtime-tokio", "postgres", "macros"] }
+thiserror = "2.0"
+tokio = { version = "1.0", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+
+[dev-dependencies]
+axum-test = "16"
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"

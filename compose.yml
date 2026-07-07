@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:18.1-alpine3.23
+    environment:
+      POSTGRES_USER: carteira_admin
+      POSTGRES_PASSWORD: carteira_pass_2026
+      POSTGRES_DB: carteira_investimentos
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

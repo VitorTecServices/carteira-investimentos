@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investir - DIO Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        santander: '#EC0000',
+                        santanderDark: '#CC0000',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen font-sans antialiased">
+    <!-- Navbar Santander -->
+    <nav class="bg-santander shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center h-16 gap-6">
+                <a href="/dashboard" class="text-white hover:text-gray-200 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </a>
+                <span class="text-2xl font-bold text-white tracking-tight">DIO Bank</span>
+                <span class="text-white/80 font-medium ml-4 hidden sm:inline">Nova Aplicação</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-white border border-gray-200 shadow-lg overflow-hidden">
+            
+            <!-- Abas (Tabs) -->
+            <div class="flex border-b border-gray-200 bg-gray-50">
+                <button id="tab-portfolio" class="flex-1 py-5 px-6 text-sm font-bold border-b-4 border-santander text-santander bg-white transition-colors" onclick="switchTab('portfolio')">
+                    Investir (Adicionar à Carteira)
+                </button>
+                <button id="tab-new" class="flex-1 py-5 px-6 text-sm font-semibold border-b-4 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors" onclick="switchTab('new')">
+                    Cadastrar Ativo Novo
+                </button>
+            </div>
+
+            <div class="p-8">
+                <div id="error-message" class="hidden mb-6 p-4 border-l-4 border-santander bg-red-50 text-santander text-sm font-bold"></div>
+
+                <!-- Form Adicionar ao Portfólio -->
+                <form id="portfolio-form" class="space-y-6">
+                    <div>
+                        <label for="asset_id" class="block text-sm font-bold text-gray-700 mb-2">Selecione o Ativo</label>
+                        <select id="asset_id" name="asset_id" required
+                            class="w-full px-4 py-3 bg-white border border-gray-300 focus:ring-2 focus:ring-santander focus:border-santander outline-none text-gray-900 transition-colors cursor-pointer">
+                            <option value="" disabled selected>Escolha onde investir...</option>
+                            {% for a in assets_list %}
+                                <option value="{{ a.id }}">{{ a.name }} - Cotação: R$ {{ format!("{:.2}", a.unit_value) }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="quantity" class="block text-sm font-bold text-gray-700 mb-2">Quantidade Solicitada</label>
+                        <input type="number" step="0.01" min="0.01" id="quantity" name="quantity" required
+                            class="w-full px-4 py-3 bg-white border border-gray-300 focus:ring-2 focus:ring-santander focus:border-santander outline-none text-gray-900 transition-colors"
+                            placeholder="Ex: 10">
+                    </div>
+
+                    <div class="pt-6">
+                        <button type="submit"
+                            class="w-full flex justify-center py-4 px-4 border border-transparent shadow-md text-base font-bold text-white bg-santander hover:bg-santanderDark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-santander transition-colors">
+                            Confirmar Investimento
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Form Cadastrar Novo Ativo -->
+                <form id="new-asset-form" class="space-y-6 hidden">
+                    <p class="text-sm font-medium text-gray-500 mb-6 border-b border-gray-200 pb-4">
+                        Ação ou fundo não encontrado? Cadastre um novo produto na base global da corretora.
+                    </p>
+                    
+                    <div>
+                        <label for="name" class="block text-sm font-bold text-gray-700 mb-2">Nome do Produto</label>
+                        <input type="text" id="name" name="name" required
+                            class="w-full px-4 py-3 bg-white border border-gray-300 focus:ring-2 focus:ring-santander focus:border-santander outline-none text-gray-900 transition-colors"
+                            placeholder="Ex: VALE3, FII MXRF11">
+                    </div>
+
+                    <div>
+                        <label for="unit_value" class="block text-sm font-bold text-gray-700 mb-2">Valor Atual (Cotação em R$)</label>
+                        <input type="number" step="0.01" min="0.01" id="unit_value" name="unit_value" required
+                            class="w-full px-4 py-3 bg-white border border-gray-300 focus:ring-2 focus:ring-santander focus:border-santander outline-none text-gray-900 transition-colors"
+                            placeholder="Ex: 15.50">
+                    </div>
+
+                    <div class="pt-6">
+                        <button type="submit"
+                            class="w-full flex justify-center py-4 px-4 border border-transparent shadow-md text-base font-bold text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors">
+                            Salvar Produto
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function switchTab(tab) {
+            const btnPort = document.getElementById('tab-portfolio');
+            const btnNew = document.getElementById('tab-new');
+            const formPort = document.getElementById('portfolio-form');
+            const formNew = document.getElementById('new-asset-form');
+            const errDiv = document.getElementById('error-message');
+            
+            errDiv.classList.add('hidden');
+
+            if (tab === 'portfolio') {
+                btnPort.className = "flex-1 py-5 px-6 text-sm font-bold border-b-4 border-santander text-santander bg-white transition-colors";
+                btnNew.className = "flex-1 py-5 px-6 text-sm font-semibold border-b-4 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors";
+                formPort.classList.remove('hidden');
+                formNew.classList.add('hidden');
+            } else {
+                btnNew.className = "flex-1 py-5 px-6 text-sm font-bold border-b-4 border-santander text-santander bg-white transition-colors";
+                btnPort.className = "flex-1 py-5 px-6 text-sm font-semibold border-b-4 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors";
+                formNew.classList.remove('hidden');
+                formPort.classList.add('hidden');
+            }
+        }
+
+        function showError(msg) {
+            const errDiv = document.getElementById('error-message');
+            errDiv.textContent = msg;
+            errDiv.classList.remove('hidden');
+        }
+
+        // Submeter adição ao portfólio
+        document.getElementById('portfolio-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const asset_id = parseInt(document.getElementById('asset_id').value);
+            const quantity = parseFloat(document.getElementById('quantity').value);
+
+            if (isNaN(asset_id)) {
+                showError("Selecione um ativo para investir.");
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/portfolio', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ asset_id, quantity })
+                });
+
+                if (res.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    const data = await res.json();
+                    showError(data.error || 'Não foi possível processar a transação.');
+                }
+            } catch (err) {
+                showError('Erro de conexão com o DIO Bank.');
+            }
+        });
+
+        // Submeter novo ativo ao sistema
+        document.getElementById('new-asset-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const unit_value = parseFloat(document.getElementById('unit_value').value);
+
+            try {
+                const res = await fetch('/api/assets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, unit_value })
+                });
+
+                if (res.ok) {
+                    alert('Produto salvo com sucesso! Agora você pode voltar na outra aba e investir nele.');
+                    window.location.reload();
+                } else {
+                    const data = await res.json();
+                    showError(data.error || 'Não foi possível salvar o produto.');
+                }
+            } catch (err) {
+                showError('Erro de conexão com o servidor.');
+            }
+        });
+    </script>
+</body>
+</html>
