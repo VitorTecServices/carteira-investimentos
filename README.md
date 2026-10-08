@@ -6,7 +6,7 @@ Uma aplicação fullstack completa desenvolvida em Rust, combinando back-end (Ax
 
 ## 🚀 Funcionalidades Implementadas (Melhorias)
 
-Este projeto foi construído com base no repositório de referência, e adicionei **6 melhorias principais** para demonstrar domínio prático do ecossistema Rust:
+Este projeto foi construído com base no repositório de referência, e adicionei **6 melhorias principais** para demonstrar domínio prático do ecossistema Rukst:
 
 1. **📊 Dashboard com Portfólio**: Visualização do patrimônio total, calculado em tempo real com base nos ativos vinculados à sua conta.
 2. **🎒 Sistema Multi-usuário de Carteiras**: Cada usuário tem sua própria carteira. A tabela `portfolio_items` foi adicionada para isolar os ativos de cada conta.
